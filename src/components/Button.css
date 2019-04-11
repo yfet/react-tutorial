@@ -1,0 +1,37 @@
+.btn {
+    height: 30px;
+    background-color: #f5f4f4;
+    border: 1px solid #e7e6e6;
+    border-radius: 3px;
+    margin: 5px;
+    font-size: .875rem;
+    min-width: 80px;
+}
+
+.btn:last-of-type {
+    margin-right: 0;
+}
+
+.btn:hover, .btn:active, .btn:focus {
+    background-color: #e7e6e6;
+    outline: none;
+}
+
+.btn:active {
+    background-color: #f5f4f4;
+}
+
+.btn.primary {
+    background-color: rgb(16, 116, 209);
+    color: #ffffff;
+    border: 1px solid rgb(13, 100, 182);
+}
+
+.btn.primary:hover, .btn.primary:active, .btn.primary:focus {
+    background-color: rgb(13, 100, 182);
+    outline: none;
+}
+
+.btn.primary:active {
+    background-color: rgb(16, 116, 209);
+}
