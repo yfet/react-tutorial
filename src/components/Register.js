@@ -1,4 +1,8 @@
 import React, { Component } from "react";
+import "firebase/auth";
+import UserContext from "./UserContext";
+import firebase, { firestore } from "../firebase";
+
 import Button from "./Button";
 import "./Login.css";
 
@@ -27,9 +31,30 @@ class Register extends Component {
     const valid = this.validate();
     if (valid) {
       this.setState({ submitting: true });
-      setTimeout(() => {
-        this.setState({ submitting: false });
-      }, 5000);
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(
+          this.state.values.email,
+          this.state.values.password
+        )
+        .then(data => {
+          if (data && data.user) {
+            console.log(data);
+            firestore
+              .collection("users_data")
+              .add({
+                firstname: this.state.values.firstname,
+                lastname: this.state.values.lastname,
+                userId: data.user.uid
+              })
+              .then(() => {
+                this.setState({ submitting: false });
+              })
+              .catch(error => {
+                this.setState({ submitting: false });
+              });
+          }
+        });
     }
   };
 
@@ -61,76 +86,118 @@ class Register extends Component {
     }
     this.setState({ errors });
     return valid;
-  }
+  };
 
   render() {
     return (
-      <form className="register-form">
-        <div className="form-row">
-          <label className="form-label" htmlFor="lastname">
-            Lastname
-          </label>
-          <input
-            className={"form-control " + (this.state.errors.lastname ? "with-errors" : "")}
-            type="text"
-            name="lastname"
-            id="lastname"
-            placeholder="lastname"
-            value={this.state.values.lastname}
-            onChange={this.handleInputChange}
-          />
-        </div>
-        {this.state.errors.lastname && <div className="errors">{this.state.errors.lastname}</div>}
-        <div className="form-row">
-          <label className="form-label" htmlFor="firstname">
-            Firstname
-          </label>
-          <input
-            className={"form-control " + (this.state.errors.firstname ? "with-errors" : "")}
-            type="text"
-            name="firstname"
-            id="firstname"
-            placeholder="firstname"
-            value={this.state.values.firstname}
-            onChange={this.handleInputChange}
-          />
-        </div>
-        {this.state.errors.firstname && <div className="errors">{this.state.errors.firstname}</div>}
-        <div className="form-row">
-          <label className="form-label" htmlFor="email">
-            Email
-          </label>
-          <input
-            className={"form-control " + (this.state.errors.email ? "with-errors" : "")}
-            type="text"
-            name="email"
-            id="email"
-            placeholder="email ou nom d'utilisateur"
-            value={this.state.values.email}
-            onChange={this.handleInputChange}
-          />
-        </div>
-        {this.state.errors.email && <div className="errors">{this.state.errors.email}</div>}
-        <div className="form-row">
-          <label className="form-label" htmlFor="password">
-            Password
-          </label>
-          <input
-            className={"form-control " + (this.state.errors.password ? "with-errors" : "")}
-            type="password"
-            name="password"
-            id="password"
-            placeholder="mot de passe"
-            value={this.state.values.password}
-            onChange={this.handleInputChange}
-          />
-        </div>
-        {this.state.errors.password && <div className="errors">{this.state.errors.password}</div>}
-        <div className="action-container">
-          <Button text="Se connecter" onClick={this.onLogin} />
-          <Button text="Créer" onClick={this.onSubmit} color="primary" loading={this.state.submitting} />
-        </div>
-      </form>
+      <UserContext.Consumer>
+        {({ currentUser }) => {
+          return (
+            <form className="register-form">
+              {currentUser && (
+                <div>
+                  <div>Vous êtes connecté en tant que: {currentUser.email}</div>
+                  <span
+                    onClick={this.signOut}
+                    style={{ color: "blue", cursor: "pointer" }}
+                  >
+                    Se Déconnecter
+                  </span>
+                </div>
+              )}
+              <div className="form-row">
+                <label className="form-label" htmlFor="lastname">
+                  Lastname
+                </label>
+                <input
+                  className={
+                    "form-control " +
+                    (this.state.errors.lastname ? "with-errors" : "")
+                  }
+                  type="text"
+                  name="lastname"
+                  id="lastname"
+                  placeholder="lastname"
+                  value={this.state.values.lastname}
+                  onChange={this.handleInputChange}
+                />
+              </div>
+              {this.state.errors.lastname && (
+                <div className="errors">{this.state.errors.lastname}</div>
+              )}
+              <div className="form-row">
+                <label className="form-label" htmlFor="firstname">
+                  Firstname
+                </label>
+                <input
+                  className={
+                    "form-control " +
+                    (this.state.errors.firstname ? "with-errors" : "")
+                  }
+                  type="text"
+                  name="firstname"
+                  id="firstname"
+                  placeholder="firstname"
+                  value={this.state.values.firstname}
+                  onChange={this.handleInputChange}
+                />
+              </div>
+              {this.state.errors.firstname && (
+                <div className="errors">{this.state.errors.firstname}</div>
+              )}
+              <div className="form-row">
+                <label className="form-label" htmlFor="email">
+                  Email
+                </label>
+                <input
+                  className={
+                    "form-control " +
+                    (this.state.errors.email ? "with-errors" : "")
+                  }
+                  type="text"
+                  name="email"
+                  id="email"
+                  placeholder="email ou nom d'utilisateur"
+                  value={this.state.values.email}
+                  onChange={this.handleInputChange}
+                />
+              </div>
+              {this.state.errors.email && (
+                <div className="errors">{this.state.errors.email}</div>
+              )}
+              <div className="form-row">
+                <label className="form-label" htmlFor="password">
+                  Password
+                </label>
+                <input
+                  className={
+                    "form-control " +
+                    (this.state.errors.password ? "with-errors" : "")
+                  }
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="mot de passe"
+                  value={this.state.values.password}
+                  onChange={this.handleInputChange}
+                />
+              </div>
+              {this.state.errors.password && (
+                <div className="errors">{this.state.errors.password}</div>
+              )}
+              <div className="action-container">
+                <Button text="Se connecter" onClick={this.onLogin} />
+                <Button
+                  text="Créer"
+                  onClick={this.onSubmit}
+                  color="primary"
+                  loading={this.state.submitting}
+                />
+              </div>
+            </form>
+          );
+        }}
+      </UserContext.Consumer>
     );
   }
 }
