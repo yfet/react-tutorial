@@ -40,3 +40,13 @@ input.form-control::placeholder {
   display: flex;
   justify-content: flex-end;
 }
+
+.errors {
+  font-size: .875rem;
+  color: red;
+  margin-left: 100px;
+}
+
+input.form-control.with-errors {
+  border: 1px solid red;
+}

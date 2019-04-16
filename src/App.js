@@ -5,7 +5,7 @@ import Register from "./components/Register";
 
 class App extends Component {
   state = {
-    action: "login"
+    action: "register"
   };
 
   onRegister = () => {
