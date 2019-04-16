@@ -2,15 +2,12 @@ import React, { Component } from "react";
 import Button from "./Button";
 import "./Login.css";
 
-class Login extends Component {
+class Register extends Component {
   state = {
+    firstname: "",
+    lastname: "",
     login: "",
     password: ""
-  };
-
-  onSubmit = event => {
-    event.preventDefault();
-    console.log(this.state.login, this.state.password);
   };
 
   handleInputChange = event => {
@@ -21,17 +18,44 @@ class Login extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    console.log(this.state);
   };
 
-  onRegister = event => {
+  onLogin = event => {
     event.preventDefault();
-    this.props.onRegister && this.props.onRegister();
+    this.props.onLogin && this.props.onLogin();
   };
 
   render() {
     return (
-      <form className="login-form">
+      <form className="register-form">
+        <div className="form-row">
+          <label className="form-label" htmlFor="lastname">
+            Lastname
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            name="lastname"
+            id="lastname"
+            placeholder="lastname"
+            value={this.state.lastname}
+            onChange={this.handleInputChange}
+          />
+        </div>
+        <div className="form-row">
+          <label className="form-label" htmlFor="firstname">
+            Firstname
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            name="firstname"
+            id="firstname"
+            placeholder="firstname"
+            value={this.state.firstname}
+            onChange={this.handleInputChange}
+          />
+        </div>
         <div className="form-row">
           <label className="form-label" htmlFor="login">
             Login
@@ -61,7 +85,7 @@ class Login extends Component {
           />
         </div>
         <div className="action-container">
-          <Button text="Créer un compte" onClick={this.onRegister} />
+          <Button text="Se connecter" onClick={this.onLogin} />
           <Button text="Submit" onClick={this.onSubmit} color="primary" />
         </div>
       </form>
@@ -69,4 +93,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default Register;
